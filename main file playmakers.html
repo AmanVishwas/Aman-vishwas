@@ -1,0 +1,127 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playmakers</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: black;
+            color: white;
+            text-align: center;
+            overflow-x: hidden;
+        }
+        
+        /* HEADER */
+        header {
+            display: flex;
+            align-items: center;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        .logo {
+            width: 70px;
+            height: 70px;
+            transition: transform 0.5s ease-in-out;
+        }
+        .logo:hover {
+            transform: rotate(15deg) scale(1.1);
+        }
+        .title {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-left: 15px;
+            text-transform: uppercase;
+            animation: glow 1.5s infinite alternate, wave 3s infinite ease-in-out;
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 10px white; }
+            to { text-shadow: 0 0 20px cyan; }
+        }
+        @keyframes wave {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* MAIN CONTENT */
+        .content {
+            margin-top: 150px;
+            font-size: 1.2em;
+            max-width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 20px;
+            border: 2px solid white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px white;
+            background: rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            opacity: 0;
+            animation: fadeIn 1.5s ease-in-out forwards;
+        }
+        .content:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px cyan;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: 50px;
+        }
+        .footer img {
+            width: 200px;
+            transition: transform 0.3s, filter 0.3s;
+            animation: pulse 2s infinite;
+        }
+        .footer img:hover {
+            transform: scale(1.1);
+            filter: brightness(1.5);
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="1742711669061.png" alt="Playmakers Logo" class="logo"> <!-- Replace with actual image -->
+        <div class="title">Playmakers</div>
+    </header>
+
+    <div class="content">
+        <h2>About Playmakers</h2>
+        <p>
+            <!-- Add information about Playmakers here -->
+
+<br>
+PlayMakers is an innovative startup from India, founded on March 23, 2025, by two young visionaries – Aman Vishwas (14 years old) and Ashish Vishwas (10 years old). <br><br>Our mission is to bring children's and parents' ideas to life through customized game development.
+<br><br>
+At PlayMakers, we turn your imagination into reality! Whether it's a game featuring your favorite superheroes, your own name as the main character, or any other custom features you dream of, we make it happen. Simply share your ideas, and we’ll craft a unique game just for you.
+<br><br>
+Our pricing is flexible, starting at just ₹5, depending on the complexity of your game idea. Let’s create something amazing together!
+<br>
+<b>Dream it. Play it. Make it with PlayMakers!<b></b>
+
+
+        </p>
+    </div>
+
+    <div class="footer">
+        <a href="https://example.com"> <!-- Replace with actual link -->
+            <img src="1742738770689.png" alt="Visit Playmakers"> <!-- Replace with actual image -->
+        </a>
+    </div>
+</body>
+</html>
