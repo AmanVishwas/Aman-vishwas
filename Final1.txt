@@ -1,0 +1,133 @@
+// Define pin numbers
+const int eyePin = 2; // Eye LED pin
+const int heartPins[] = {13, 12, 11, 9, 8}; // Heart LED pins
+const int numHeartLeds = 5; // Number of heart LEDs
+const int vibratorPin = 5; // Vibrator pin
+const int speakerPin = 4; // Speaker pin
+const int inputPin = 10; // Input pin to control the behavior
+
+// Timings
+const int heartBlinkDelay = 250; // Delay for heart blinking in alert mode
+const int heartSequenceDelay = 100; // Delay for heart LEDs sequence
+const int messageDelay = 100; // Time delay for sending message to computer (100ms)
+const int eyeFadeStep = 5; // Step size for brightness changes (smaller = smoother)
+const int eyeFadeDelay = 20; // Delay for each brightness change (adjust for speed)
+
+unsigned long previousMessageTime = 0; // To store the last time a message was sent
+int eyeBrightness = 0; // Current brightness of the eyes
+bool increasingBrightness = true; // Direction of brightness change
+
+void setup() {
+  // Set LED, vibrator, and speaker pins as OUTPUT
+  pinMode(eyePin, OUTPUT);
+  for (int i = 0; i < numHeartLeds; i++) {
+    pinMode(heartPins[i], OUTPUT);
+  }
+  pinMode(vibratorPin, OUTPUT);
+  pinMode(speakerPin, OUTPUT);
+
+  // Set input pin to INPUT_PULLUP
+  pinMode(inputPin, INPUT_PULLUP);
+  
+  // Start serial communication at 9600 baud rate
+  Serial.begin(9600);
+}
+
+void loop() {
+  int inputState = digitalRead(inputPin); // Read input from pin 10
+
+  // Send message to computer every 100 ms
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMessageTime >= messageDelay) {
+    previousMessageTime = currentMillis;
+    Serial.print("Input Pin State: ");
+    Serial.println(inputState == LOW ? "ACTIVE (LOW)" : "INACTIVE (HIGH)"); // Inform about the input state
+  }
+
+  if (inputState == LOW) {
+    // If input is ACTIVE (LOW), turn on heart LEDs in sequence
+    heartSequence();
+    // Gradually fade eyes in and out
+    driftEyesWithSound();
+    // Turn off vibrator during normal mode
+    digitalWrite(vibratorPin, LOW);
+    digitalWrite(speakerPin, LOW);
+  } else {
+    // If input is INACTIVE (HIGH), blink heart LEDs and vibrator together
+    alertHeartVibratorSpeaker();
+    // Turn off eyes
+    analogWrite(eyePin, 0);
+  }
+}
+
+// Function to turn on heart LEDs in sequence
+void heartSequence() {
+  // Loop through each heart LED
+  for (int i = 0; i < numHeartLeds; i++) {
+    // Turn off all LEDs
+    for (int j = 0; j < numHeartLeds; j++) {
+      digitalWrite(heartPins[j], LOW);
+    }
+    
+    // Turn on the current LED in sequence
+    digitalWrite(heartPins[i], HIGH);
+    delay(heartSequenceDelay); // Wait for the next LED in the sequence
+  }
+}
+
+// Function to gradually fade eyes in and out with sound
+void driftEyesWithSound() {
+  // Adjust brightness based on direction
+  if (increasingBrightness) {
+    eyeBrightness += eyeFadeStep;
+    if (eyeBrightness >= 255) { // Maximum brightness reached
+      eyeBrightness = 255;
+      increasingBrightness = false;
+    }
+  } else {
+    eyeBrightness -= eyeFadeStep;
+    if (eyeBrightness <= 0) { // Minimum brightness reached
+      eyeBrightness = 0;
+      increasingBrightness = true;
+    }
+  }
+  
+  // Apply brightness to the eyes
+  analogWrite(eyePin, eyeBrightness);
+  
+  // Add robotic sound synchronized with eye fading
+  if (eyeBrightness % 20 == 0) { // Sound triggers at brightness steps
+    tone(speakerPin, 500 + eyeBrightness * 2, 50); // Frequency varies with brightness
+  }
+
+  delay(eyeFadeDelay); // Small delay for smooth fading
+}
+
+// Function to blink heart LEDs, vibrator, and speaker together in an alert manner
+void alertHeartVibratorSpeaker() {
+  static unsigned long lastAlertTime = 0;
+  unsigned long currentMillis = millis();
+  
+  // Blink hearts, vibrator, and speaker every 250ms (adjustable for alert effect)
+  if (currentMillis - lastAlertTime >= heartBlinkDelay) {
+    static bool alertState = LOW;
+    alertState = !alertState; // Toggle alert state
+
+    // Turn all heart LEDs on or off
+    for (int i = 0; i < numHeartLeds; i++) {
+      digitalWrite(heartPins[i], alertState);
+    }
+
+    // Turn vibrator on or off based on alert state
+    digitalWrite(vibratorPin, alertState);
+
+    // Generate "beep-beep" sound for alert
+    if (alertState) {
+      tone(speakerPin, 1000, 200); // Beep with 1000 Hz frequency for 200ms
+    } else {
+      noTone(speakerPin); // Turn off speaker sound
+    }
+
+    lastAlertTime = currentMillis;
+  }
+}
